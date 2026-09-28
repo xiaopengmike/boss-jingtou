@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>精投助手</title>
+<style>
+  body { width: 320px; margin: 0; padding: 12px; font: 13px/1.6 -apple-system, "PingFang SC", sans-serif; color: #222; background: #fff; }
+  h1 { font-size: 15px; margin: 0 0 4px; }
+  .sub { color: #888; font-size: 11px; margin-bottom: 8px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
+  .cell { background: #f6f8fa; border-radius: 8px; padding: 8px 10px; }
+  .cell .n { font-size: 18px; font-weight: 700; }
+  .cell .l { color: #888; font-size: 11px; }
+  #bar { height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; margin: 6px 0 10px; }
+  #barFill { height: 100%; background: #1677ff; width: 0; transition: width .3s; }
+  #runLine { padding: 8px 10px; border-radius: 8px; background: #f6ffed; border: 1px solid #b7eb8f; font-size: 12px; margin-bottom: 8px; }
+  #runLine.warn { background: #fff0f6; border-color: #ffadd2; color: #c41d7f; }
+  #runLine.idle { background: #f6f8fa; border-color: #e5e5e5; color: #666; }
+  .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btns button { flex: 1; min-width: 90px; border: 1px solid #d9d9d9; background: #fff; border-radius: 6px; padding: 6px 0; cursor: pointer; font-size: 12px; }
+  .btns button.primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+  .btns button:hover { opacity: .85; }
+  .links { margin-top: 8px; display: flex; gap: 10px; font-size: 11px; }
+  .links a { color: #1677ff; text-decoration: none; cursor: pointer; }
+</style>
+</head>
+<body>
+  <h1>精投助手 <span id="acct" class="sub"></span></h1>
+  <div class="sub" id="modeLine">—</div>
+  <div class="grid">
+    <div class="cell"><div class="n" id="sent">0/0</div><div class="l">今日已发 / 上限</div></div>
+    <div class="cell"><div class="n" id="queued">0</div><div class="l">待投队列</div></div>
+    <div class="cell"><div class="n" id="silent">0</div><div class="l">疑似静默失效</div></div>
+    <div class="cell"><div class="n" id="failed">0</div><div class="l">今日失败</div></div>
+  </div>
+  <div id="bar"><div id="barFill"></div></div>
+  <div id="runLine" class="idle">—</div>
+  <div class="btns">
+    <button id="go" class="primary">开始投递</button>
+    <button id="pause">暂停</button>
+  </div>
+  <div class="btns" style="margin-top:6px">
+    <button id="exportCsv">导出台账 CSV</button>
+    <button id="exportBuf">导出缓冲 JSON</button>
+  </div>
+  <div class="btns" style="margin-top:6px">
+    <button id="clearQueue">清空队列</button>
+    <button id="resetAll">重置全部数据</button>
+  </div>
+  <div class="links">
+    <a id="openOptions">设置</a>
+    <a id="tierUp">升档</a>
+    <a id="resetDaily">重置今日计数</a>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

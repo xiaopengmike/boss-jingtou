@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+._*
+__*
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# 依赖与构建产物
+node_modules/
+dist/
+*.zip
+*.crx
+*.pem
+
+# 本地导出与临时数据
+*.local.*
+jingtou-*.csv
+jingtou-*.json

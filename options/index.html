@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>精投助手 - 设置</title>
+<style>
+  body { max-width: 720px; margin: 24px auto; padding: 0 16px 48px; font: 14px/1.7 -apple-system, "PingFang SC", sans-serif; color: #222; background: #fff; }
+  h1 { font-size: 20px; }
+  h2 { font-size: 15px; margin-top: 28px; border-left: 3px solid #1677ff; padding-left: 8px; }
+  fieldset { border: 1px solid #e5e5e5; border-radius: 8px; margin: 10px 0; padding: 12px 16px; }
+  legend { color: #666; font-size: 12px; padding: 0 6px; }
+  label { display: inline-flex; align-items: center; gap: 6px; margin: 4px 14px 4px 0; }
+  input[type=text], input[type=number], select, textarea {
+    border: 1px solid #d9d9d9; border-radius: 6px; padding: 4px 8px; font: inherit;
+  }
+  input[type=number] { width: 72px; }
+  textarea { width: 100%; box-sizing: border-box; font-family: ui-monospace, monospace; font-size: 12px; }
+  .row { margin: 6px 0; }
+  .hint { color: #999; font-size: 12px; }
+  .warn { color: #c41d7f; }
+  #saveBar { position: sticky; bottom: 0; background: #fff; padding: 12px 0; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; }
+  button { border: 1px solid #d9d9d9; background: #fff; border-radius: 6px; padding: 7px 18px; cursor: pointer; font-size: 13px; }
+  button.primary { background: #1677ff; border-color: #1677ff; color: #fff; }
+  #savedMsg { color: #52c41a; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>精投助手 - 设置</h1>
+<p class="hint">所有配置即时生效（下一条投递起）。改「规则 JSON」可适配 BOSS 改版，无需更新扩展。</p>
+
+<h2>账号与模式</h2>
+<fieldset>
+  <legend>身份</legend>
+  <div class="row">
+    <label>账号标签 <input type="text" id="accountLabel" style="width:100px"></label>
+    <span class="hint">小号 / 主账号；台账按此分区，切账号不会混表</span>
+  </div>
+  <div class="row">
+    <label>自动化模式
+      <select id="autoMode">
+        <option value="hybrid">白名单全自动 + 灰名单人工（推荐）</option>
+        <option value="full">纯全自动（符合筛选即投，零人工）</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label><input type="checkbox" id="autoStart"> 纯全自动模式下，新职位入队后自动开跑（不点「开始投递」）</label>
+  </div>
+  <div class="row">
+    <label><input type="checkbox" id="pocMode"> M0 取证模式（记录全部接口响应，用于接口考古；正式运行请关闭）</label>
+  </div>
+</fieldset>
+
+<h2>频控（核心安全层，默认值经时间预算核算）</h2>
+<fieldset>
+  <legend>限额与节奏</legend>
+  <div class="row">
+    <label>日上限（平台额度）<input type="number" id="dailyCap" min="5" max="100"></label>
+    <label>灰度档位 <b id="tierText">档0（5条）</b> <button id="tierUp" type="button">升档</button></label>
+    <span class="hint">实际上限 = min(日上限, 档位)；升档必须人工，熔断自动暂停</span>
+  </div>
+  <div class="row"><span id="capHint" class="hint"></span></div>
+  <div class="row">
+    <label>条间间隔（秒）<input type="number" id="intervalMinSec" min="30" max="600"> ~ <input type="number" id="intervalMaxSec" min="30" max="600"></label>
+    <label>活跃时段 <input type="text" id="windowStart" style="width:56px"> ~ <input type="text" id="windowEnd" style="width:56px"></label>
+  </div>
+  <div class="row">
+    <label>每 <input type="number" id="batchSize" min="3" max="30"> 条休息</label>
+    <label><input type="number" id="restMinMin" min="1" max="60"> ~ <input type="number" id="restMaxMin" min="1" max="60"> 分钟</label>
+    <label>连续失败 <input type="number" id="failStreakLimit" min="2" max="5"> 次熔断</label>
+  </div>
+  <div class="row hint">100 条/天按默认节奏 ≈ 6.2 小时（活跃时段 9 小时，余量 31%）。需要更大余量时：先拉长时段 → 再放宽批次休息 → 最后才动条间间隔（风控最敏感）。</div>
+</fieldset>
+
+<h2>筛选与分级</h2>
+<fieldset>
+  <legend>队列来源</legend>
+  <div class="row"><label>高置信阈值 <input type="number" id="highThreshold" min="0" max="100"></label>
+    <span class="hint">关键词得分 ≥ 此值 → 高置信（hybrid 下自动入队）；每个白名单词命中 +10，HR 活跃 +5</span></div>
+  <div class="row">
+    <label><input type="checkbox" id="requireActive"> 只投 HR「刚刚活跃 / 今日活跃」的职位（默认开；本周活跃及更久直接淘汰，不进队列）</label>
+  </div>
+  <div class="row">关键词白名单（逗号分隔）<textarea id="kwWhitelist" rows="2"></textarea></div>
+  <div class="row">关键词黑名单<textarea id="kwBlacklist" rows="2"></textarea></div>
+  <div class="row">公司黑名单<textarea id="companyBlacklist" rows="1"></textarea></div>
+  <div class="row">
+    <label>薪资（K）<input type="number" id="salaryMinK" min="0" max="200"> ~ <input type="number" id="salaryMaxK" min="0" max="200"></label>
+    <label>城市（逗号分隔，空=不限）<input type="text" id="cities" style="width:160px"></label>
+    <span class="hint">薪资 0 表示不限制；支持解析「20-35K·14薪」「2-3.5万」</span>
+  </div>
+</fieldset>
+
+<h2>招呼语</h2>
+<fieldset>
+  <legend>发送内容</legend>
+  <div class="row">
+    <label>招呼语模式
+      <select id="greetingMode">
+        <option value="system">发系统预置招呼语（默认，推荐）</option>
+        <option value="template">发自定义模板（实测发不出去，勿选）</option>
+      </select>
+    </label>
+  </div>
+  <div class="row hint">系统模式：<b>不改写输入框</b>，直接发送 BOSS 在首次沟通时下发的默认招呼语（自定义文本在 BOSS 侧发不出去，故默认改走此路径）。台账仍记录实际发出的原文。</div>
+  <div class="row">自定义模板（仅在「发自定义模板」模式下生效）— 变量：{公司} {职位名} {JD关键词}</div>
+  <textarea id="greetingTemplate" rows="3"></textarea>
+  <div class="row hint">建议：提一句对方 JD 具体点 + 一句你的量化匹配。同质化招呼语在 BOSS 上约等于已读不回。</div>
+</fieldset>
+
+<h2>规则 JSON（M0 取证后校准）</h2>
+<fieldset>
+  <legend>高级：选择器 / 文本线索 / 接口特征</legend>
+  <textarea id="rulesJson" rows="10"></textarea>
+</fieldset>
+
+<div id="saveBar">
+  <button id="save" class="primary">保存</button>
+  <span id="savedMsg"></span>
+  <span class="hint">合规红线：仅限本人账号 · 遇验证码即停 · 本工具违反 BOSS 用户协议，风险自负</span>
+</div>
+
+<script src="options.js"></script>
+</body>
+</html>

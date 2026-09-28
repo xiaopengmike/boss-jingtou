@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "精投助手",
+  "version": "0.1.0",
+  "description": "BOSS直聘求职者侧精投加速器：采集职位→本地筛选分级→人工/自动队列→低速打招呼→台账追踪。仅限本人账号自用。",
+  "permissions": ["storage", "scripting", "activeTab", "alarms"],
+  "host_permissions": [
+    "https://www.zhipin.com/*",
+    "https://*.zhipin.com/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.zhipin.com/web/geek/*", "https://www.zhipin.com/job_detail/*", "https://www.zhipin.com/web/chat/*"],
+      "js": ["content/sniff-relay.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["https://www.zhipin.com/web/geek/*", "https://www.zhipin.com/job_detail/*", "https://www.zhipin.com/web/chat/*"],
+      "js": ["content/sniff-hook.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://www.zhipin.com/web/geek/*"],
+      "js": ["lib/scoring.js", "content/panel.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": { "page": "options/index.html", "open_in_tab": true },
+  "action": { "default_popup": "popup/popup.html", "default_title": "精投助手" }
+}

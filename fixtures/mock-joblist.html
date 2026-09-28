@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>mock - 职位列表</title></head>
+<body style="font:14px sans-serif;padding:24px">
+<h1>mock 职位列表（离线联调用）</h1>
+<p>本页用 fetch 拉取一段内嵌 JSON，模拟 BOSS 列表接口响应。配合扩展临时加 host_permissions 后，sniff-hook 应捕获本条响应，面板「扫描缓冲」应解析出 3 条职位（第 3 条命中黑名单应被淘汰）。</p>
+<div id="jobs"></div>
+<script>
+  var mock = {
+    code: 0,
+    zpData: {
+      jobList: [
+        { encryptJobId: 'aB3xK9mQ2pL8vN4sT1yU', jobName: 'IT经理（研发数字化方向）', salaryDesc: '25-40K·14薪', brandName: '某智能硬件公司', bossName: '王经理', activeTimeDesc: '刚刚活跃', cityName: '深圳', areaDistrict: '南山区', skills: ['ITBP', 'ALM', '研发效能'] },
+        { encryptJobId: 'cD5yM2nR7qW9xP6uV3zA', jobName: '信息化主管', salaryDesc: '20-30K', brandName: '某制造企业', bossName: '李HR', activeTimeDesc: '今日活跃', cityName: '深圳', areaDistrict: '宝安区', labels: ['信息化', 'PLM'] },
+        { encryptJobId: 'eF7aP4qS9rT2yU8wX5bC', jobName: '销售代表（外包）', salaryDesc: '8-12K', brandName: '某公司', bossName: '张总', activeTimeDesc: '3天前活跃', cityName: '深圳', areaDistrict: '龙岗区', skills: ['销售'] }
+      ]
+    }
+  };
+  fetch('data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(mock)))
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      document.getElementById('jobs').textContent = '已加载 ' + j.zpData.jobList.length + ' 条 mock 职位（接口响应见 Network / 扩展缓冲）';
+    });
+</script>
+</body>
+</html>

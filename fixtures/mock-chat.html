@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>mock 聊天页（M0 取证结构复刻）</title>
+</head>
+<body style="max-width:640px;margin:40px auto;font:14px/1.6 sans-serif">
+<h3>chat-sender 离线验证页</h3>
+<p>复刻 2026-09-28 取证的真实结构：顶层 .dialog-wrap.startchat-dialog 内
+textarea.input-area（预置默认招呼语），发送按钮 div.send-message（空输入带 disable class）。</p>
+<div class="dialog-wrap startchat-dialog" style="border:1px solid #ddd;border-radius:8px;padding:12px">
+  <div id="msgs" style="border:1px solid #eee;border-radius:6px;min-height:100px;padding:10px;margin-bottom:10px">
+    <div>HR：你好，对这个岗位感兴趣吗？</div>
+  </div>
+  <textarea id="editor" class="input-area" placeholder="请简短描述您的问题"
+    style="width:95%;min-height:44px;padding:8px;box-sizing:border-box">觉得我和贵公司的岗位很匹配，有信心胜任，想试一下。</textarea>
+  <div id="send" class="send-message disable"
+    style="margin-top:8px;padding:8px 20px;background:#08c;color:#fff;border-radius:4px;display:inline-block;cursor:pointer">发送</div>
+</div>
+<script>
+  /* 模拟 BOSS 弹框交互：input 摘除/加回 disable，点击发送后消息落入聊天区、清空输入框 */
+  var ed = document.getElementById('editor'), btn = document.getElementById('send');
+  ed.addEventListener('input', function () {
+    btn.className = 'send-message' + (ed.value.trim() ? '' : ' disable');
+  });
+  btn.addEventListener('click', function () {
+    if (btn.className.indexOf('disable') !== -1) return;
+    var t = ed.value.trim();
+    if (!t) return;
+    var d = document.createElement('div');
+    d.textContent = '我：' + t;
+    document.getElementById('msgs').appendChild(d);
+    ed.value = '';
+    btn.className = 'send-message disable';
+  });
+</script>
+</body>
+</html>

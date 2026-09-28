@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>mock - 职位详情</title></head>
+<body style="font:14px sans-serif;padding:24px">
+<h1>mock 职位详情（离线联调用）</h1>
+<p>点「立即沟通」0.8s 后跳转 mock-chat.html，用于验证 greeter 的 navigate 分支。</p>
+<p>把下面按钮文本改成「继续沟通」可验证 already 分支；在 body 加「安全验证」字样可验证验证码即停。</p>
+<button id="greet" style="padding:10px 24px;font-size:16px">立即沟通</button>
+<script>
+  document.getElementById('greet').addEventListener('click', function () {
+    setTimeout(function () { location.href = 'mock-chat.html'; }, 800);
+  });
+</script>
+</body>
+</html>
